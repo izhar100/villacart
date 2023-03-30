@@ -1,7 +1,11 @@
 import React from 'react'
-import { Flex, Box, Button, Text, Checkbox, Grid, GridItem } from '@chakra-ui/react'
-import { FaAngleDown, FaAngleUp,FaShoppingBag } from "react-icons/fa";
+import { Link } from 'react-router-dom';
+import { Flex, Box, Button, Text, Checkbox, Grid, GridItem, Spinner } from '@chakra-ui/react'
+import { FaAngleDown, FaAngleUp, FaShoppingBag } from "react-icons/fa";
 import { getData } from '../../api/api';
+import Loader from '../common/Loader';
+import { useContext } from 'react';
+import { CartContext } from '../Contexts/CartProvider';
 const initData = {
     loading: false,
     data: [],
@@ -17,7 +21,7 @@ const reducer = (state, action) => {
         }
         case "SUCCESS": {
             return {
-                ...state, loading: false, data: action.payload
+                ...state, loading: false, data: action.payload, total: action.total,
             }
         }
         case "ERROR": {
@@ -31,21 +35,31 @@ const reducer = (state, action) => {
     }
 
 }
-
+const initRange = {
+    gte: 0,
+    lte: 10000
+}
 const Menu = () => {
+    const cartdata=React.useRef([])
     const [angle, setAngle] = React.useState(true)
     const [showcat, setShowcat] = React.useState(true)
     const [state, dispatch] = React.useReducer(reducer, initData)
     const [page, setPage] = React.useState(1)
     const [price, setPrice] = React.useState('asc')
-
-    const fetchData = (page, price) => {
+    const [gte, setGte] = React.useState(0)
+    const [lte, setLte] = React.useState(10000)
+    const value=useContext(CartContext)
+    const {addtoCart}=value
+    console.log(value)
+    const fetchData = (page, price, gte, lte) => {
         dispatch({ type: "LOADING" })
         getData({
             page: page,
             limit: 12,
             sort: 'price',
-            order: price
+            order: price,
+            price_gte: gte,
+            price_lte: lte
         }).then((data) => {
 
             dispatch({ type: "SUCCESS", payload: data?.data, total: data.headers['x-total-count'] })
@@ -56,14 +70,14 @@ const Menu = () => {
     React.useEffect(() => {
         console.log(state)
         fetchData(page, price)
-    }, [page, price])
+    }, [page, price, gte, lte])
     const { loading, data, total, error } = state
-    if(loading){
-        return <Text as="b" size={"30px"} textAlign={'center'}>Loading...</Text>
+    if (loading) {
+        return <Loader/>
     }
     return (
         <>
-            <Flex fontFamily={'Georgia'} pt={'20px'} gap={5} width={'92%'} margin='auto'>
+            <Flex fontFamily={'Georgia'} pt={'20px'} gap={5} width={'92%'} margin='auto' mb={"10px"}>
                 <Box w={'15%'} pr={'10px'}>
                     <Text fontSize={'25px'}>Filter by</Text>
                     <Flex alignItems={'center'} justifyContent={'space-between'}>
@@ -116,33 +130,33 @@ const Menu = () => {
                         <Text>Sort By:</Text>
                         <Text>Popular</Text>
                         <Text>|</Text>
-                        <Text>Price : Low to High</Text>
+                        <Text onClick={() => setPrice('asc')} _hover={{ cursor: "pointer" }}>Price : Low to High</Text>
                         <Text>|</Text>
-                        <Text>Price : High to Low</Text>
+                        <Text onClick={() => setPrice('desc')} _hover={{ cursor: "pointer" }}>Price : High to Low</Text>
                         <Text>|</Text>
-                        <Text>Discount</Text>
+                        <Text _hover={{ cursor: "pointer" }}>Discount</Text>
                         <Text>|</Text>
-                        <Text>New Arrival</Text>
+                        <Text _hover={{ cursor: "pointer" }}>New Arrival</Text>
                     </Flex>
                     <Box mt={'10px'} w={'100%'}>
                         <Grid templateColumns='repeat(4, 1fr)' gap={1}>
                             {data?.map((item, ind) => {
-                                return <GridItem p={3} _hover={{ boxShadow:'rgba(0, 0, 0, 0.24) 0px 3px 8px'}}>
-                                    <Box pb={2}><img width={'100%'} src={item.image1} alt="image1" /></Box>
-                                    <Text noOfLines={1}>{item.name}</Text>
-                                    <Flex alignItems={'center'} margin={'auto'} width={'65%'} justifyContent={'space-between'}><Text color={'#FF9B00'} fontSize={'20px'}>₹ {item.price}</Text>
-                                        <Text textDecoration={'line-through'} color={'gray'}>₹ 299</Text>
-                                        <Text fontSize={'12px'} color={'#AD0027'}>{ind + 45}% off</Text>
-                                    </Flex>
-                                    <Button color={'white'} bg={'#902735'} w={'100%'} textAlign={'center'} gap={2} _hover={{backgroundColor:'black'}}>{<FaShoppingBag/>}  Add to Cart</Button>
+                                return <GridItem key={item.id} p={3} _hover={{ boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px' }}>
+                                    <Link to={`/product/${item.id}`}><Box pb={2}><img width={'100%'} src={item.image1} alt="image1" /></Box>
+                                        <Text noOfLines={1}>{item.name}</Text>
+                                        <Flex alignItems={'center'} margin={'auto'} width={'65%'} justifyContent={'space-between'}><Text color={'#FF9B00'} fontSize={'20px'}>₹ {item.price}</Text>
+                                            <Text textDecoration={'line-through'} color={'gray'}>₹ 299</Text>
+                                            <Text fontSize={'12px'} color={'#AD0027'}>{ind + 45}% off</Text>
+                                        </Flex></Link>
+                                    <Button onClick={()=>addtoCart(item)} color={'white'} bg={'#902735'} w={'100%'} textAlign={'center'} gap={2} _hover={{ backgroundColor: 'black' }}>{<FaShoppingBag />}  Add to Cart</Button>
                                 </GridItem>
                             })}
                         </Grid>
                     </Box>
-                    <Flex justifyContent={'space-between'} width={'190px'} margin={'auto'}>
-                        <Button colorScheme='#AD0027' variant='outline'>PRE</Button>
-                        <Button _hover={'backgroundColor:#AD0027'} disabled bg='#AD0027' >1</Button>
-                        <Button colorScheme='#AD0027' variant='outline'>NEXT</Button>
+                    <Flex justifyContent={'space-between'} width={'200px'} margin={'auto'}>
+                        <Button isDisabled={page === 1} onClick={() => setPage(page - 1)} colorScheme='#AD0027' variant='outline'>PRE</Button>
+                        <Button color={'white'} _hover={'backgroundColor:#AD0027'} disabled bg='#AD0027' >{page}</Button>
+                        <Button isDisabled={page === Math.floor(total / 12)} onClick={() => setPage(page + 1)} colorScheme='#AD0027' variant='outline'>NEXT</Button>
                     </Flex>
                 </Box>
             </Flex>
