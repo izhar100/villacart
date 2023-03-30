@@ -58,7 +58,9 @@ const Menu = () => {
         fetchData(page, price)
     }, [page, price])
     const { loading, data, total, error } = state
-
+    if(loading){
+        return <Text as="b" size={"30px"} textAlign={'center'}>Loading...</Text>
+    }
     return (
         <>
             <Flex fontFamily={'Georgia'} pt={'20px'} gap={5} width={'92%'} margin='auto'>
