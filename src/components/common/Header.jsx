@@ -5,19 +5,18 @@ import { MdRoom } from "react-icons/md";
 import { FaUser, FaShoppingCart } from "react-icons/fa";
 import { IoIosHeartEmpty } from "react-icons/io";
 import logo from "../assets/images/Villa-Cart.png"
-import { useContext } from 'react';
 import { CartContext } from '../Contexts/CartProvider';
+import { useContext } from 'react';
 const Header = () => {
     const value=useContext(CartContext)
     const {data}=value
-    console.log("on home page",data)
     return (<>
         <Stack>
             <Box w='100%' p={4} color='white' textAlign="center" border="1px solid black">
                 <Text as='b' fontFamily="Muli" color="#9C0000">GET RS 50 OFF ON ORDERS ABOVE RS 100</Text>
             </Box>
             <Box position={"absolute"} right={"86"} top={"55"} width={'15px'} as='b' color={'#9C0000'} borderRadius="10px" bg="#DDDDDD" fontSize='12px' textAlign={"center"}>
-               <Text>{data?data.length:'0'}</Text>
+               <Text>{data.length}</Text>
             </Box>
             <Flex alignItems={'center'}>
                 <Flex width={'20%'} justifyContent={'center'}>
@@ -45,12 +44,14 @@ const Header = () => {
                             </Flex>
                             |
                         </Flex>
-                        <Box ml={'20px'}>
+                        <Link to='/cart'>
+                        <Box _hover={{cursor:"pointer"}} ml={'20px'}>
                             <Flex alignItems={'center'} gap="5px">
                                 <FaShoppingCart />
                                 <Text>Cart</Text>
                             </Flex>
                         </Box>
+                        </Link>
                         <Box>
 
                         </Box>
