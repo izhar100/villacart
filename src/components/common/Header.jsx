@@ -7,12 +7,13 @@ import { IoIosHeartEmpty } from "react-icons/io";
 import logo from "../assets/images/Villa-Cart.png"
 import { CartContext } from '../Contexts/CartProvider';
 import { useContext } from 'react';
+import Login from '../Login/Login';
 const Header = () => {
     const value=useContext(CartContext)
     const {data}=value
     return (<>
         <Stack>
-            <Box w='100%' p={4} color='white' textAlign="center" border="1px solid black">
+            <Box w='100%' margin={'auto'} p={4} color='white' textAlign="center" border="1px solid black">
                 <Text as='b' fontFamily="Muli" color="#9C0000">GET RS 50 OFF ON ORDERS ABOVE RS 100</Text>
             </Box>
             <Box position={"absolute"} right={"86"} top={"55"} width={'15px'} as='b' color={'#9C0000'} borderRadius="10px" bg="#DDDDDD" fontSize='12px' textAlign={"center"}>
@@ -36,8 +37,8 @@ const Header = () => {
                 <Box width={'30%'}>
                     <Flex fontFamily={'Merriweather'} fontSize="18px" gap="10px" alignItems={'center'} justifyContent="center">
                         <Flex gap="10px" alignItems={'center'}>
-                            <Flex gap="5px"><FaUser size={"20px"} />
-                                Sign In / Register</Flex>
+                            <Link to='/login'><Flex _hover={{cursor:"pointer"}} gap="5px"><FaUser size={"20px"} />
+                                Sign In / Register</Flex></Link>
                             <Flex gap='5px'>
                                 <IoIosHeartEmpty size={"25px"} />
                                 <Text>WishList</Text>
@@ -68,6 +69,7 @@ const Header = () => {
                 <Box p={3} _hover={{bg:'#EAE5DC',color:"#902735",cursor:"pointer"}} ><Text>Cloths</Text></Box>
             </Flex>
         </Box>
+
     </>
     )
 }
