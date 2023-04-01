@@ -8,6 +8,7 @@ import Stores from './components/home/Stores';
 import SingleProduct from './components/SingleProduct/SingleProduct';
 import Cart from './components/cart/Cart';
 import Orderdone from './components/cart/Orderdone';
+import Login from './components/Login/Login';
 
 function App() {
   return (<>
@@ -19,6 +20,7 @@ function App() {
       <Route path='/product/:id' element={<SingleProduct/>}/>
       <Route path='/cart' element={<Cart/>}/>
       <Route path='/confirmation' element={<Orderdone/>}/>
+      <Route path='/login' element={<Login/>} />
     </Routes>
     <Footer />
   </>
