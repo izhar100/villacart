@@ -1,6 +1,6 @@
 import React from 'react'
-import { Link } from 'react-router-dom';
-import { Flex, Box, Button, Text, Checkbox, Grid, GridItem, Spinner } from '@chakra-ui/react'
+import { Link,useNavigate } from 'react-router-dom';
+import { Flex, Box, Button, Text, Checkbox, Grid, GridItem, useToast } from '@chakra-ui/react'
 import { FaAngleDown, FaAngleUp, FaShoppingBag } from "react-icons/fa";
 import { getData } from '../../api/api';
 import Loader from '../common/Loader';
@@ -40,6 +40,8 @@ const initRange = {
     lte: 10000
 }
 const Menu = () => {
+    const toast=useToast()
+    const navigate=useNavigate()
     const cartdata=React.useRef([])
     const [angle, setAngle] = React.useState(true)
     const [showcat, setShowcat] = React.useState(true)
@@ -49,18 +51,17 @@ const Menu = () => {
     const [gte, setGte] = React.useState(0)
     const [lte, setLte] = React.useState(10000)
     const value=useContext(CartContext)
-    const {addtoCart}=value
-    console.log(value)
-    const fetchData = (page, price, gte, lte) => {
+    const {addtoCart,auth,q}=value
+    const fetchData = (page, price, gte, lte,q)=>{
         dispatch({ type: "LOADING" })
         getData({
             page: page,
             limit: 12,
             sort: 'price',
             order: price,
-            price_gte: gte,
-            price_lte: lte
-        }).then((data) => {
+            gte:gte,
+            lte:lte,
+        },q).then((data) => {
 
             dispatch({ type: "SUCCESS", payload: data?.data, total: data.headers['x-total-count'] })
         }).catch((error) => {
@@ -69,8 +70,34 @@ const Menu = () => {
     }
     React.useEffect(() => {
         console.log(state)
-        fetchData(page, price)
-    }, [page, price, gte, lte])
+        fetchData(page, price,gte,lte,q)
+    }, [page, price, gte, lte,q])
+
+    const handleAddtoCart=(item)=>{
+         if(auth===false){
+            toast({
+                title: 'Please Login First',
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+                position:'top'
+              })
+            navigate('/login')
+         }else{
+            addtoCart(item)
+         }
+    }
+    const handleFilter=(checked,value)=>{
+         if(checked){
+            if(value=='500-1000'){
+                setGte(500)
+                setLte(1000)
+            }
+         }else{
+            setGte(0)
+         }
+    }
+
     const { loading, data, total, error } = state
     if (loading) {
         return <Loader/>
@@ -86,19 +113,19 @@ const Menu = () => {
                     </Flex>
                     <Box display={angle ? 'none' : 'block'}>
                         <Flex gap={5}>
-                            <Checkbox></Checkbox>
+                            <Checkbox value='500-1000' onChange={(e)=>handleFilter(e.target.checked,e.target.value)}></Checkbox>
                             <Text>500-1000</Text>
                         </Flex>
                         <Flex gap={5}>
-                            <Checkbox></Checkbox>
+                            <Checkbox value='200-500' onChange={(e)=>handleFilter(e.target.checked,e.target.value)}></Checkbox>
                             <Text>200-500</Text>
                         </Flex>
                         <Flex gap={5}>
-                            <Checkbox></Checkbox>
+                            <Checkbox value='morethan500'  onChange={(e)=>handleFilter(e.target.checked,e.target.value)}></Checkbox>
                             <Text>Above 500</Text>
                         </Flex>
                         <Flex gap={5}>
-                            <Checkbox></Checkbox>
+                            <Checkbox value='lessthan500'  onChange={(e)=>handleFilter(e.target.checked,e.target.value)}></Checkbox>
                             <Text>Below 500</Text>
                         </Flex>
                     </Box>
@@ -148,7 +175,7 @@ const Menu = () => {
                                             <Text textDecoration={'line-through'} color={'gray'}>₹ 299</Text>
                                             <Text fontSize={'12px'} color={'#AD0027'}>{ind + 45}% off</Text>
                                         </Flex></Link>
-                                    <Button onClick={()=>addtoCart(item)} color={'white'} bg={'#902735'} w={'100%'} textAlign={'center'} gap={2} _hover={{ backgroundColor: 'black' }}>{<FaShoppingBag />}  Add to Cart</Button>
+                                    <Button onClick={()=>handleAddtoCart(item)} color={'white'} bg={'#902735'} w={'100%'} textAlign={'center'} gap={2} _hover={{ backgroundColor: 'black' }}>{<FaShoppingBag />}  Add to Cart</Button>
                                 </GridItem>
                             })}
                         </Grid>

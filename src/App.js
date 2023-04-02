@@ -9,6 +9,7 @@ import SingleProduct from './components/SingleProduct/SingleProduct';
 import Cart from './components/cart/Cart';
 import Orderdone from './components/cart/Orderdone';
 import Login from './components/Login/Login';
+import PrivateRoute from './components/Private/PrivateRoute';
 
 function App() {
   return (<>
@@ -18,7 +19,11 @@ function App() {
       <Route path='/menu' element={<Menu/>} />
       <Route path='/stores' element={<Stores/>}/>
       <Route path='/product/:id' element={<SingleProduct/>}/>
-      <Route path='/cart' element={<Cart/>}/>
+      <Route path='/cart' element={
+      <PrivateRoute>
+      <Cart/>
+      </PrivateRoute>
+      }/>
       <Route path='/confirmation' element={<Orderdone/>}/>
       <Route path='/login' element={<Login/>} />
     </Routes>

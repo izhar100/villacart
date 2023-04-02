@@ -1,16 +1,22 @@
 import { Text, Box, Spacer, Flex, Input, InputGroup, InputLeftAddon, InputRightAddon, Stack} from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import { MdSearch } from "react-icons/md";
 import { MdRoom } from "react-icons/md";
 import { FaUser, FaShoppingCart } from "react-icons/fa";
 import { IoIosHeartEmpty } from "react-icons/io";
 import logo from "../assets/images/Villa-Cart.png"
 import { CartContext } from '../Contexts/CartProvider';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import Login from '../Login/Login';
 const Header = () => {
+    const [query,setQuery]=useState('')
+    const navigate=useNavigate()
     const value=useContext(CartContext)
-    const {data}=value
+    const {data,auth,handleQuery}=value
+    const handleSearchClick=()=>{
+        handleQuery(query)
+        navigate('/menu')
+    }
     return (<>
         <Stack>
             <Box w='100%' margin={'auto'} p={4} color='white' textAlign="center" border="1px solid black">
@@ -27,8 +33,8 @@ const Header = () => {
                     <Flex alignItems={'center'} gap="8px">
                         <InputGroup size='md' bg={"#DDDDDD"} fontSize="14px" borderRadius={"5px"}>
                             <InputLeftAddon bg={"#DDDDDD"} children='SEARCH' />
-                            <Input placeholder='Search here for products in Giridih' />
-                            <InputRightAddon _hover={{cursor:"pointer"}} bg={'#DDDDDD'} children={<MdSearch size={'80%'} />} />
+                            <Input onChange={(e)=>setQuery(e.target.value)} placeholder='Search here for products in Giridih' />
+                            <InputRightAddon _hover={{cursor:"pointer"}} bg={'#DDDDDD'} children={<MdSearch size={'80%'} />} onClick={handleSearchClick} />
                         </InputGroup>
                         <Spacer />
                         <Flex alignItems={'center'}><MdRoom size={'9%'} /><Text>Giridih,Jharkhand</Text></Flex>
@@ -37,8 +43,9 @@ const Header = () => {
                 <Box width={'30%'}>
                     <Flex fontFamily={'Merriweather'} fontSize="18px" gap="10px" alignItems={'center'} justifyContent="center">
                         <Flex gap="10px" alignItems={'center'}>
-                            <Link to='/login'><Flex _hover={{cursor:"pointer"}} gap="5px"><FaUser size={"20px"} />
-                                Sign In / Register</Flex></Link>
+                            {auth?<Flex _hover={{cursor:"pointer"}} gap="5px"><FaUser size={"20px"} />
+                            My Account</Flex>:<Link to='/login'><Flex _hover={{cursor:"pointer"}} gap="5px"><FaUser size={"20px"} />
+                            Sign In / Register</Flex></Link>}
                             <Flex gap='5px'>
                                 <IoIosHeartEmpty size={"25px"} />
                                 <Text>WishList</Text>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import firebase from './firebase'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import logo from "../assets/images/Villa-Cart.png"
 import {
     Modal,
@@ -21,12 +21,14 @@ import Home from '../home/Home'
 import { FaCartPlus } from "react-icons/fa";
 import { ImPriceTag } from "react-icons/im";
 import { BsMinecartLoaded } from "react-icons/bs";
+import { ImCancelCircle } from "react-icons/im";
 import OTP from './Otp'
 
 const Login = () => {
     const [checkOtp,setOtp]=useState(false)
     const toast = useToast()
     const [phoneNumber, setPhoneNumber] = useState('')
+    const navigate=useNavigate()
     const handleclick = () => {
         if (phoneNumber.length !== 10) {
             toast({
@@ -38,6 +40,13 @@ const Login = () => {
               })
         }
         else{
+            toast({
+                title:`OTP successfully sent to ${phoneNumber}`,
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+                position:'top'
+              })
             setOtp(true)
         }
     }
@@ -50,6 +59,9 @@ const Login = () => {
         onOpen()
         console.log(flag)
     }, [flag])
+    const handleClose=()=>{
+        navigate('/')
+    }
     return (
         <> <Home />
            { checkOtp?<OTP/>:
@@ -59,10 +71,13 @@ const Login = () => {
                 isOpen={isOpen}
                 onClose={onClose}
                 size={'xl'}
+                closeOnOverlayClick={false}
             >
                 <ModalOverlay />
                 <ModalContent>
-                    <Link to='/'><ModalCloseButton /></Link>
+                    <Flex w='100%' justifyContent={'right'}>
+                        <Button onClick={handleClose} p={'0px'} bg='white' borderRadius={'50%'}><ImCancelCircle/></Button>
+                    </Flex>
                     <ModalBody p={10}>
                         <Flex gap={5}>
                             <Box w='50%'>
@@ -94,14 +109,14 @@ const Login = () => {
                             </Box>
                             <Box>
                                 <form id='form' onSubmit={(e) => e.preventDefault()} >
-                                    <Box><img width={'250px'} src={logo} alt='logo' /></Box>
+                                    <Box w='100%'><img width={'150px'} src={logo} alt='logo' /></Box>
                                     <br />
                                     <Text textDecoration={'underline'} fontSize={'20px'} as='b'>{flag ? "Login/SignUp" : "Register"}</Text>
                                     <br />
                                     <br />
                                     <Text>Please provide your Mobile No.</Text>
                                     <FormControl>
-                                        <Input onChange={(e) => setPhoneNumber(e.target.value)} ref={initialRef} placeholder='Enter 10 digit Mobile No.' />
+                                        <Input border={'2px solid #9C0000'} onChange={(e) => setPhoneNumber(e.target.value)} ref={initialRef} placeholder='Enter 10 digit Mobile No.' />
                                     </FormControl>
                                     <br />
                                     <Flex justifyContent={'center'}>

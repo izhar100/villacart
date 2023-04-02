@@ -46,6 +46,7 @@ function PaymentSuccess() {
                 <Text color={'green'} pt={'5px'}>{count} seconds</Text>
             </Box>
             <Text as='b'>Order Id: {orderid}</Text>
+            <br />
             <Text>Thanks for choosing VillaCart! Keep shopping !</Text>  
             </AlertDescription>
         </Alert>

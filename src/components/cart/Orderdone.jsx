@@ -13,8 +13,7 @@ import {
     FormControl,
     FormLabel,
     Input, Box, Text, Flex,
-    FormErrorMessage,
-    FormHelperText,
+    useToast,
 } from '@chakra-ui/react'
 import cardlogo from "../assets/images/PaymentMethod.png"
 import PaymentSuccess from '../alerts/PaymentSuccess'
@@ -23,6 +22,7 @@ function Orderdone() {
     const value=useContext(CartContext)
     const {total}=value
     const { isOpen, onOpen, onClose } = useDisclosure()
+    const toast = useToast()
     React.useEffect(() => {
         onOpen()
     }, [])
@@ -36,12 +36,40 @@ function Orderdone() {
     const handlePayment = () => {
         if (cardNumber == '') {
             window.location.href = "#cardNum"
+            toast({
+                title: 'Please Enter Card Number.',
+                status: 'warning',
+                duration: 3000,
+                isClosable: true,
+                position:'top'
+              })
         } else if (expiry == '') {
             window.location.href = "#expiry"
+            toast({
+                title: 'Please Select Expiry Date.',
+                status: 'warning',
+                duration: 3000,
+                isClosable: true,
+                position:'top'
+              })
         } else if (cvv == '') {
             window.location.href = "#cvv"
+            toast({
+                title: 'Please Enter CVV.',
+                status: 'warning',
+                duration: 3000,
+                isClosable: true,
+                position:'top'
+              })
         } else if (holdername == '') {
             window.location.href = "#holdername"
+            toast({
+                title: 'Please Enter Card Holder Number.',
+                status: 'warning',
+                duration: 3000,
+                isClosable: true,
+                position:'top'
+              })
         }
         else {
             setDone(true)
@@ -101,7 +129,7 @@ function Orderdone() {
                                 <FormControl mt={4} isRequired>
                                     <Flex gap={2}>
                                         <Box w={'80%'}><FormLabel>CARD EXPIRY</FormLabel>
-                                            <Input id='date' type='date' onChange={(e) => setExpiry(e.target.value)} /></Box>
+                                            <Input id='date' type='text' onChange={(e) => setExpiry(e.target.value)} placeholder='mm/yyyy' /></Box>
                                         <Box><FormLabel>CARD CVV</FormLabel>
                                             <Input id='cvv' type='number' placeholder='***' onChange={(e) => setCvv(e.target.value)} /></Box>
                                     </Flex>
