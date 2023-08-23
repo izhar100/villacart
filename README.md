@@ -1,7 +1,7 @@
 # Villa Cart
 An E-commerce website where you can buy crafts-related products.
 
-Deployed link: https://villacart.netlify.app/
+Deployed link: https://villa-cart.vercel.app/
 
 <h2>Pages</h2>
 <ul>
